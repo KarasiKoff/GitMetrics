@@ -1,5 +1,5 @@
 import re
-from datetime import date, datetime, time, timezone
+from datetime import UTC, date, datetime, time
 from typing import Any
 from urllib.parse import urlparse
 
@@ -79,9 +79,9 @@ class GitHubClient:
 
 def _date_to_iso(value: date, *, end_of_day: bool) -> str:
     if end_of_day:
-        dt = datetime.combine(value, time(23, 59, 59), tzinfo=timezone.utc)
+        dt = datetime.combine(value, time(23, 59, 59), tzinfo=UTC)
     else:
-        dt = datetime.combine(value, time.min, tzinfo=timezone.utc)
+        dt = datetime.combine(value, time.min, tzinfo=UTC)
     return dt.isoformat().replace("+00:00", "Z")
 
 
