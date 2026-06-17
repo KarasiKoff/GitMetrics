@@ -39,3 +39,11 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["gitmetrics"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
