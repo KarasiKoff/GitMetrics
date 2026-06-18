@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 import respx
-from httpx import Response
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 GITHUB_COMMITS_URL = (
@@ -23,7 +22,5 @@ def sample_commits() -> list[dict]:
 def mock_github_response(sample_commits: list[dict]) -> Iterator[respx.MockRouter]:
     """respx-мок эндпоинта GET /repos/{owner}/{repo}/commits."""
     with respx.mock(assert_all_called=False) as router:
-        router.get(url__regex=GITHUB_COMMITS_URL).respond(
-            Response(200, json=sample_commits)
-        )
+        router.get(url__regex=GITHUB_COMMITS_URL).respond(200, json=sample_commits)
         yield router

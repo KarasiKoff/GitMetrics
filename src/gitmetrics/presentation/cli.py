@@ -1,4 +1,8 @@
+import logging
+
 import typer
+
+logger = logging.getLogger(__name__)
 
 app = typer.Typer(
     name="gitmetrics",
@@ -30,9 +34,17 @@ def audit(
 ) -> None:
     """Запустить аудит репозитория за указанный период."""
     from gitmetrics.infrastructure.config import load_settings
+    from gitmetrics.infrastructure.logging import setup_logging
 
     settings = load_settings()
+    setup_logging(settings.log_level)
+
+    repo_ref = f"{owner}/{repo}"
+    logger.info("Аудит начат: %s, период %s — %s", repo_ref, since, until)
+
     typer.echo(
         f"Аудит {owner}/{repo} с {since} по {until} "
-        f"(format={output_format}, log_level={settings.log_level}) — not implemented"
+        f"(format={output_format}) — not implemented"
     )
+
+    logger.info("Аудит завершён")

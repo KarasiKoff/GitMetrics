@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import UTC, date, datetime, time
 from typing import Any
@@ -6,6 +7,8 @@ from urllib.parse import urlparse
 import httpx
 
 from gitmetrics.domain.models import Author, Commit
+
+logger = logging.getLogger(__name__)
 
 GITHUB_API_BASE = "https://api.github.com"
 
@@ -74,6 +77,15 @@ class GitHubClient:
 
             url = _parse_next_link(response.headers.get("Link"))
 
+        if not commits:
+            logger.warning(
+                "Пустой результат: коммиты не найдены для %s/%s", owner, repo
+            )
+        else:
+            logger.info(
+                "Получено %d коммитов для %s/%s", len(commits), owner, repo
+            )
+
         return commits
 
 
@@ -141,12 +153,23 @@ def _is_rate_limited(response: httpx.Response) -> bool:
 
 def _raise_for_status(response: httpx.Response) -> None:
     if response.status_code == 401:
+        logger.error("GitHub API: неверный или отсутствующий токен (401)")
         raise GitHubAuthError("GitHub API: неверный или отсутствующий токен (401)")
 
     if response.status_code == 404:
+        logger.error("GitHub API: репозиторий не найден (404)")
         raise GitHubNotFoundError("GitHub API: репозиторий не найден (404)")
 
     if response.status_code == 403 and _is_rate_limited(response):
+        logger.warning("GitHub API: превышен лимит запросов (403)")
         raise GitHubRateLimitError("GitHub API: превышен лимит запросов (403)")
 
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        logger.error(
+            "GitHub API: ошибка %d — %s",
+            exc.response.status_code,
+            exc.response.text,
+        )
+        raise
