@@ -41,7 +41,9 @@ def test_github_client_logs_commit_count(
     mock_github_response: respx.MockRouter,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    with caplog.at_level(logging.INFO, logger="gitmetrics.infrastructure.github_client"):
+    with caplog.at_level(
+        logging.INFO, logger="gitmetrics.infrastructure.github_client"
+    ):
         with GitHubClient("test-token") as client:
             commits = client.fetch_commits(
                 "octocat",
