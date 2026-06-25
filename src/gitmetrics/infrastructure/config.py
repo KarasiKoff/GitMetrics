@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 class Settings:
     github_token: str
     log_level: str = "INFO"
+    log_dir: str = "logs"
 
 
 def load_settings() -> Settings:
@@ -21,4 +22,5 @@ def load_settings() -> Settings:
     return Settings(
         github_token=token,
         log_level=os.getenv("LOG_LEVEL", "INFO"),
+        log_dir=os.getenv("LOG_DIR", "logs"),
     )

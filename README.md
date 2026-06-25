@@ -38,6 +38,7 @@ copy .env.example .env        # Windows
 ```env
 GITHUB_TOKEN=ghp_your_token_here
 LOG_LEVEL=INFO
+LOG_DIR=logs
 ```
 
 > Файл `.env` не коммитится в репозиторий. В git хранится только `.env.example`.
@@ -103,6 +104,16 @@ docker run --rm --env-file .env -v "%cd%/reports:/app/reports" gitmetrics audit 
   --since 2025-01-01 \
   --until 2025-06-01 \
   --output /app/reports
+```
+
+Логи дублируются в консоль и в `{LOG_DIR}/gitmetrics.log` (по умолчанию `logs/`). Для сохранения логов с хоста:
+
+```bash
+docker run --rm --env-file .env -v "%cd%/logs:/app/logs" gitmetrics audit \
+  --owner octocat \
+  --repo Hello-World \
+  --since 2025-01-01 \
+  --until 2025-06-01
 ```
 
 ---

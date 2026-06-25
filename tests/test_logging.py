@@ -9,7 +9,7 @@ from gitmetrics.infrastructure.github_client import (
     GitHubNotFoundError,
     GitHubRateLimitError,
 )
-from gitmetrics.infrastructure.logging import LOG_FORMAT, setup_logging
+from gitmetrics.infrastructure.logging import LOG_FILENAME, LOG_FORMAT, setup_logging
 
 
 @pytest.fixture(autouse=True)
@@ -20,21 +20,33 @@ def _reset_logging() -> None:
     root.setLevel(logging.WARNING)
 
 
-def test_setup_logging_sets_level_and_format() -> None:
-    setup_logging("DEBUG")
+def test_setup_logging_sets_level_and_format(tmp_path) -> None:
+    setup_logging("DEBUG", log_dir=str(tmp_path))
 
     root = logging.getLogger()
     assert root.level == logging.DEBUG
-    assert len(root.handlers) == 1
+    assert len(root.handlers) == 2
 
-    formatter = root.handlers[0].formatter
-    assert formatter is not None
-    assert formatter._fmt == LOG_FORMAT
+    formatters = {handler.formatter._fmt for handler in root.handlers}
+    assert formatters == {LOG_FORMAT}
 
 
-def test_setup_logging_invalid_level_defaults_to_info() -> None:
-    setup_logging("NOT_A_LEVEL")
+def test_setup_logging_invalid_level_defaults_to_info(tmp_path) -> None:
+    setup_logging("NOT_A_LEVEL", log_dir=str(tmp_path))
     assert logging.getLogger().level == logging.INFO
+
+
+def test_setup_logging_writes_to_file(tmp_path) -> None:
+    setup_logging("INFO", log_dir=str(tmp_path))
+    logging.getLogger("gitmetrics.test").info("hello file")
+
+    for handler in logging.getLogger().handlers:
+        handler.flush()
+        handler.close()
+
+    log_file = tmp_path / LOG_FILENAME
+    assert log_file.exists()
+    assert "hello file" in log_file.read_text(encoding="utf-8")
 
 
 def test_github_client_logs_commit_count(

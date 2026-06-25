@@ -26,6 +26,17 @@ python -m pytest --cov=gitmetrics --cov-report=term-missing
 | `tests/conftest.py` | Фикстуры `sample_commits`, `mock_github_response` |
 | `tests/fixtures/` | JSON-фикстуры для моков GitHub API |
 
+## Логирование
+
+Логи выводятся в **stderr** (консоль / `docker logs`) и дублируются в файл `{LOG_DIR}/gitmetrics.log`.
+
+Переменные окружения:
+
+| Переменная | По умолчанию | Описание |
+|------------|--------------|----------|
+| `LOG_LEVEL` | `INFO` | Уровень логирования |
+| `LOG_DIR` | `logs` | Директория для log-файла |
+
 ## Линтер
 
 ```bash
