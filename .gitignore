@@ -160,6 +160,10 @@ venv.bak/
 # Application logs (gitmetrics)
 logs/
 
+# Generated audit reports
+report.json
+report.md
+
 # Spyder project settings
 .spyderproject
 .spyproject
