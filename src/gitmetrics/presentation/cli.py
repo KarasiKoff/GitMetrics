@@ -62,7 +62,7 @@ def audit(
     from gitmetrics.infrastructure.logging import setup_logging
 
     settings = load_settings()
-    setup_logging(settings.log_level)
+    setup_logging(settings.log_level, settings.log_dir)
 
     since_date = _parse_date(since, "since")
     until_date = _parse_date(until, "until")

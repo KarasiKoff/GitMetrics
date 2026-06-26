@@ -157,6 +157,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Application logs (gitmetrics)
+logs/
+
 # Spyder project settings
 .spyderproject
 .spyproject
